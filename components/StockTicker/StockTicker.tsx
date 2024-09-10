@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import Image from "next/image";
 import coinDataRaw from "@/utils/coinData.txt";
+import { CoinData } from "@/types/coinData"; // Create this type
 
-const coinData = JSON.parse(coinDataRaw);
+const coinData: CoinData[] = JSON.parse(coinDataRaw);
 
 interface StockTickerProps {
   stock: Stock;
@@ -29,7 +30,7 @@ const formatPrice = (price: number | null): string => {
 
 const findCoinId = (symbol: string): string | null => {
   const coin = coinData.find(
-    (c: any) => c.symbol.toLowerCase() === symbol.toLowerCase()
+    (c: CoinData) => c.symbol.toLowerCase() === symbol.toLowerCase()
   );
   return coin ? coin.id : null;
 };
@@ -75,10 +76,8 @@ const StockTicker: React.FC<StockTickerProps> = ({
 }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  // Make sure you're setting imageUrl somewhere, for example:
   useEffect(() => {
-    // Fetch and set imageUrl here
-    // setImageUrl(fetchedUrl);
+    fetchCryptoImage(stock.symbol).then(setImageUrl);
   }, [stock.symbol]);
 
   return (
