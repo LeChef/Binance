@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import Image from "next/image";
 import coinDataRaw from "@/utils/coinData.txt";
-import { CoinData } from "@/types/coinData"; // Create this type
+import { CoinData } from "@/types/coinData";
 
 const coinData: CoinData[] = JSON.parse(coinDataRaw);
 

@@ -66,18 +66,6 @@ export default function Component() {
     setStocks(newStocks);
   };
 
-  const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
-    }
-
-    const items = Array.from(stocks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setStocks(items);
-  };
-
   useEffect(() => {
     const updatePrices = async () => {
       const updatedStocks = await Promise.all(
