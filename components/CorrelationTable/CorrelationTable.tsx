@@ -64,7 +64,7 @@ export default function CorrelationTable({
         <h1 className="text-xl sm:text-2xl font-bold text-white mr-2">
           Correlation Table
         </h1>
-        <InfoButton content={infoContent} position="bottom-left" />
+        <InfoButton content={infoContent} />
       </div>
       {stocks.length < 2 ? (
         <p className="text-gray-400 mt-4 italic">
