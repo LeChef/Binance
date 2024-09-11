@@ -1,16 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import StockTicker from "@/components/StockTicker/StockTicker";
 import AddTicker from "@/components/AddTicker/AddTicker";
 import SearchModal from "@/components/SearchModal/SearchModal";
-import { getStockPrice } from "@/utils/stockUtils";
+import { getStockPrice, getHistoricalData } from "@/utils/stockUtils";
 import StockPopup from "@/components/StockPopup/StockPopup";
 import CorrelationTable from "@/components/CorrelationTable/CorrelationTable";
-import { getHistoricalData } from "@/utils/stockUtils";
 import { Stock } from "@/types/stock";
-
-// Function to check if a symbol exists and get its current price
 
 export default function Component() {
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -19,22 +16,42 @@ export default function Component() {
   const [historicalData, setHistoricalData] = useState<{
     [symbol: string]: number[];
   }>({});
+  const [isAddingStock, setIsAddingStock] = useState(false);
 
-  const addStock = async (symbol: string): Promise<boolean> => {
-    if (stocks.some((stock) => stock.symbol === symbol)) {
-      return false; // Indicates failure (duplicate stock)
-    }
+  const addStock = useCallback(
+    async (symbol: string): Promise<boolean> => {
+      if (isAddingStock) return false;
+      setIsAddingStock(true);
 
-    const price = await getStockPrice(symbol);
-    if (price !== null) {
-      const newStock = { symbol, price, change: 0 };
-      setStocks((prevStocks) => [...prevStocks, newStock]);
-      return true; // Indicates success
-    } else {
-      alert(`Symbol ${symbol} not found or error occurred.`);
-      return false; // Indicates failure (stock not found)
-    }
-  };
+      try {
+        if (stocks.some((stock) => stock.symbol === symbol)) {
+          console.log(`Symbol ${symbol} already exists`);
+          return false;
+        }
+
+        const price = await getStockPrice(symbol);
+        if (price !== null) {
+          const newStock = { symbol, price, change: 0 };
+          setStocks((prevStocks) => {
+            const updatedStocks = [...prevStocks, newStock];
+            console.log("Updated stocks:", updatedStocks);
+            return updatedStocks;
+          });
+          console.log(`Added new stock: ${symbol}`);
+          return true;
+        } else {
+          console.error(`Symbol ${symbol} not found or error occurred.`);
+          return false;
+        }
+      } catch (error) {
+        console.error(`Error adding stock ${symbol}:`, error);
+        return false;
+      } finally {
+        setIsAddingStock(false);
+      }
+    },
+    [stocks, isAddingStock]
+  );
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
@@ -59,11 +76,12 @@ export default function Component() {
 
     if (draggedIndex === targetIndex) return;
 
-    const newStocks = [...stocks];
-    const [draggedStock] = newStocks.splice(draggedIndex, 1);
-    newStocks.splice(targetIndex, 0, draggedStock);
-
-    setStocks(newStocks);
+    setStocks((prevStocks) => {
+      const newStocks = [...prevStocks];
+      const [draggedStock] = newStocks.splice(draggedIndex, 1);
+      newStocks.splice(targetIndex, 0, draggedStock);
+      return newStocks;
+    });
   };
 
   useEffect(() => {
@@ -84,9 +102,9 @@ export default function Component() {
       setStocks(updatedStocks);
     };
 
-    const intervalId = setInterval(updatePrices, 1000); // Update every 5 seconds
+    const intervalId = setInterval(updatePrices, 5000); // Update every 5 seconds
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
+    return () => clearInterval(intervalId);
   }, [stocks]);
 
   useEffect(() => {
@@ -103,6 +121,18 @@ export default function Component() {
 
     fetchHistoricalData();
   }, [stocks]);
+
+  useEffect(() => {
+    if (selectedStock) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedStock]);
 
   const handleStockClick = (stock: Stock) => {
     setSelectedStock(stock);
@@ -148,9 +178,17 @@ export default function Component() {
       <SearchModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={addStock}
+        onSubmit={async (symbol) => {
+          const success = await addStock(symbol);
+          if (success) {
+            setIsModalOpen(false);
+          }
+          return success;
+        }}
       />
-      <StockPopup stock={selectedStock} onClose={closePopup} />
+      {selectedStock && (
+        <StockPopup stock={selectedStock} onClose={closePopup} />
+      )}
       <CorrelationTable stocks={stocks} historicalData={historicalData} />
     </div>
   );

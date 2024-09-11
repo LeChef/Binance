@@ -82,12 +82,12 @@ const StockTicker: React.FC<StockTickerProps> = ({
 
   return (
     <div
-      className="bg-card text-card-foreground p-4 rounded-lg shadow-sm flex flex-col justify-between h-full relative cursor-move"
+      className="bg-card text-card-foreground p-4 rounded-lg shadow-sm flex flex-col justify-between h-full relative cursor-move bg-gray-600"
       draggable
       onDragStart={(e) => onDragStart(e, stock.symbol)}
     >
       <div
-        className="absolute top-1 right-1 w-6 h-6 bg-red-500 rounded flex items-center justify-center cursor-pointer"
+        className="absolute top-1 right-1 w-6 h-6 bg-red-600 rounded flex items-center justify-center cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           onDelete(stock.symbol);
@@ -96,7 +96,7 @@ const StockTicker: React.FC<StockTickerProps> = ({
         <span className="text-white font-bold">×</span>
       </div>
       <div
-        className="font-bold cursor-pointer flex items-center"
+        className="font-bold cursor-pointer flex items-center text-white"
         onClick={() => onClick({ ...stock, imageUrl })}
       >
         <span>{stock.symbol}</span>
@@ -110,8 +110,8 @@ const StockTicker: React.FC<StockTickerProps> = ({
           />
         )}
       </div>
-      <div className="text-2xl">{formatPrice(stock.price)}</div>
-      <div className={stock.change >= 0 ? "text-green-500" : "text-red-500"}>
+      <div className="text-2xl text-gray-100">{formatPrice(stock.price)}</div>
+      <div className={stock.change >= 0 ? "text-green-500" : "text-rose-600"}>
         {stock.change.toFixed(2)}%
       </div>
     </div>

@@ -59,30 +59,26 @@ export default function CorrelationTable({
   );
 
   return (
-    <div className="mt-8">
-      <div className="flex items-center">
-        <div>
-          <h1 className="text-2xl font-bold mb-2 text-white">
-            Correlation Table
-          </h1>
-        </div>
-        <div className="pb-2">
-          <InfoButton content={infoContent} />
-        </div>
+    <div className="mt-8 px-2 sm:px-0">
+      <div className="flex items-center mb-4 relative">
+        <h1 className="text-xl sm:text-2xl font-bold text-white mr-2">
+          Correlation Table
+        </h1>
+        <InfoButton content={infoContent} position="bottom-left" />
       </div>
       {stocks.length < 2 ? (
         <p className="text-gray-400 mt-4 italic">
           To show correlation, add 2 or more Tickers to the panel.
         </p>
       ) : (
-        <div className="mt-8 bg-white bg-opacity-20 pr-6 pl-2 pb-6 rounded-lg shadow-lg overflow-x-auto">
-          <table className="w-full border-collapse table-fixed">
+        <div className="mt-4 bg-white bg-opacity-10 rounded-lg shadow-lg overflow-x-auto">
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="w-20 h-20 min-w-[5rem] sticky left-0 z-10 "></th>
+                <th className="sticky left-0 z-10 bg-gray-600 p-2"></th>
                 {stocks.map((stock) => (
-                  <th key={stock.symbol} className="p-0">
-                    <div className="flex items-center justify-center h-20 text-white">
+                  <th key={stock.symbol} className="p-2 bg-gray-600">
+                    <div className="text-white text-xs sm:text-sm whitespace-nowrap">
                       {stock.symbol}
                     </div>
                   </th>
@@ -92,8 +88,8 @@ export default function CorrelationTable({
             <tbody>
               {stocks.map((stock1) => (
                 <tr key={stock1.symbol}>
-                  <th className="w-20 h-20 min-w-[5rem] p-0 sticky left-0 z-10">
-                    <div className="flex items-center justify-center h-full text-white">
+                  <th className="sticky left-0 z-10 bg-gray-600 p-2">
+                    <div className="text-white text-xs sm:text-sm whitespace-nowrap">
                       {stock1.symbol}
                     </div>
                   </th>
@@ -105,14 +101,14 @@ export default function CorrelationTable({
                     return (
                       <td
                         key={`${stock1.symbol}-${stock2.symbol}`}
-                        className={`p-0 ${
+                        className={`p-2 ${
                           stock1.symbol === stock2.symbol
-                            ? "bg-gray-300"
+                            ? "bg-gray-400"
                             : bgColor
                         }`}
                       >
-                        <div className="flex items-center justify-center h-20">
-                          <span className="text-white font-bold">
+                        <div className="flex items-center justify-center">
+                          <span className="text-white font-bold text-xs sm:text-sm">
                             {correlation?.toFixed(2) || "-"}
                           </span>
                         </div>

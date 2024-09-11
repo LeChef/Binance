@@ -35,12 +35,17 @@ const StockPopup = ({ stock, onClose }: StockPopupProps) => {
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: {
-      type: "candlestick" as const,
+      type: "candlestick",
       height: 350,
+      background: "#1F2937", // Dark background for the chart
+      foreColor: "#D1D5DB", // Light text color for better contrast
     },
     title: {
       text: `${stock.symbol} Last 180 Days`,
       align: "left",
+      style: {
+        color: "#D1D5DB", // Light text color for the title
+      },
     },
     xaxis: {
       type: "datetime",
@@ -49,6 +54,12 @@ const StockPopup = ({ stock, onClose }: StockPopupProps) => {
       tooltip: {
         enabled: true,
       },
+      labels: {
+        formatter: (value) => value.toFixed(2),
+      },
+    },
+    tooltip: {
+      theme: "dark",
     },
   };
 
@@ -62,10 +73,10 @@ const StockPopup = ({ stock, onClose }: StockPopupProps) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center mb-4">
-          <h2 className="text-2xl font-bold text-black mr-2">{stock.symbol}</h2>
+          <h2 className="text-2xl font-bold text-white mr-2">{stock.symbol}</h2>
           {stock.imageUrl && (
             <Image
               src={stock.imageUrl}
@@ -76,7 +87,7 @@ const StockPopup = ({ stock, onClose }: StockPopupProps) => {
             />
           )}
         </div>
-        <p className="text-black">Price: ${stock.price?.toFixed(2) ?? "N/A"}</p>
+        <p className="text-white">Price: ${stock.price?.toFixed(2) ?? "N/A"}</p>
         <p className={stock.change >= 0 ? "text-green-500" : "text-red-500"}>
           Change: {stock.change.toFixed(2)}%
         </p>
@@ -90,12 +101,14 @@ const StockPopup = ({ stock, onClose }: StockPopupProps) => {
             />
           )}
         </div>
-        <button
-          className="mt-4 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-500"
-          onClick={onClose}
-        >
-          Close
-        </button>
+        <div className="mt-4 flex justify-end">
+          <button
+            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
